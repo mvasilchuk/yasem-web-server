@@ -1,0 +1,7 @@
+{
+  "name":"Web server plugin",
+  "version": "0.1",
+  "id": "webserver-browser",
+    "roles": ["webserver"],
+    "dependencies": []
+}
