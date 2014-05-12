@@ -41,4 +41,6 @@ include(../common.pri)
 DESTDIR = $$DEFAULT_PLUGIN_DIR
 
 OTHER_FILES += \
-    metadata.json
+    metadata.json \
+    LICENSE \
+    README.md
