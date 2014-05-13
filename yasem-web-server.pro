@@ -4,6 +4,8 @@
 #
 #-------------------------------------------------
 
+VERSION = 1.0.0
+
 QT       += network
 
 QT       -= gui
@@ -12,7 +14,6 @@ CONFIG += C++11
 
 TARGET = yasem-web-server
 TEMPLATE = lib
-CONFIG += plugin
 
 DEFINES += WEBSERVER_LIBRARY
 
