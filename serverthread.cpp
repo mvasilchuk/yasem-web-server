@@ -113,7 +113,7 @@ void ServerThread::readyRead()
         bool result = file->open(QFile::ReadOnly);
         if(!result)
         {
-            ERROR(QString("Cannot open file: %1 -> %2").arg(filename).arg(file->errorString()));
+            ERROR() << QString("Cannot open file: %1 -> %2").arg(filename).arg(file->errorString());
         }
         else
         {
