@@ -92,12 +92,6 @@ void ServerThread::readyRead()
             }
         }
 
-        QHash<QString, QString>::iterator iter;
-        for (iter = headers.begin(); iter != headers.end(); ++iter)
-        {
-            //qDebug() << "header:" << iter.key() << ":" << iter.value();
-        }
-
         TcpResponse response;
         response.setStatus(200);
         response.setHeader("Content-Type", "text/html; charset=\"utf-8\"");

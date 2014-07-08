@@ -10,14 +10,14 @@ QT       += network
 
 QT       -= gui
 
-CONFIG += C++11
+CONFIG += c++11
 
 TARGET = yasem-web-server
 TEMPLATE = lib
 
 DEFINES += WEBSERVER_LIBRARY
 
-INCLUDEPATH += ../yasem-core
+INCLUDEPATH += ../../yasem-core
 
 SOURCES += webserver.cpp \
     serverthread.cpp \
@@ -38,7 +38,7 @@ unix {
 }
 
 
-include(../common.pri)
+include(../../common.pri)
 DESTDIR = $$DEFAULT_PLUGIN_DIR
 
 OTHER_FILES += \

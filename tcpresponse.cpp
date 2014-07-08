@@ -31,22 +31,20 @@ void TcpResponse::setData(const QByteArray &data)
 
 QString TcpResponse::toString()
 {
-    QHash<QString, QString>::iterator iter;
     QStringList headerList;
-    for(iter = headers.begin(); iter != headers.end(); iter++)
+    for(QString name: headers)
     {
-        headerList.append(QString("%1:%2\r\n").arg(iter.key()).arg(iter.value()));
+        headerList.append(QString("%1:%2\r\n").arg(name).arg(headers.value(name)));
     }
     return QString("HTTP/1.0 %1 %2\r\n%3\r\n%4").arg(status).arg("Ok").arg(headerList.join("")).arg(QString(data));
 }
 
 QByteArray TcpResponse::getData()
 {
-    QHash<QString, QString>::iterator iter;
     QStringList headerList;
-    for(iter = headers.begin(); iter != headers.end(); iter++)
+    for(QString name: headers)
     {
-        headerList.append(QString("%1:%2\r\n").arg(iter.key()).arg(iter.value()));
+         headerList.append(QString("%1:%2\r\n").arg(name).arg(headers.value(name)));
     }
 
     QString head = QString("HTTP/1.0 %1 %2\r\n%3\r\n").arg(status).arg("Ok").arg(headerList.join(""));
