@@ -22,14 +22,12 @@ INCLUDEPATH += ../../yasem-core
 SOURCES += webserver.cpp \
     serverthread.cpp \
     tcpserver.cpp \
-    tcprequest.cpp \
     tcpresponse.cpp
 
 HEADERS += webserver.h\
         webserver_global.h \
     serverthread.h \
     tcpserver.h \
-    tcprequest.h \
     tcpresponse.h
 
 unix {
