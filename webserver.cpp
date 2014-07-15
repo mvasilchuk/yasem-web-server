@@ -21,5 +21,12 @@ PLUGIN_ERROR_CODES WebServer::deinitialize()
     return PLUGIN_ERROR_NO_ERROR;
 }
 
+void yasem::WebServer::register_dependencies()
+{
+    add_dependency(PluginDependency(ROLE_BROWSER, false));
+}
 
-
+void yasem::WebServer::register_roles()
+{
+    register_role(ROLE_UNSPECIFIED);
+}

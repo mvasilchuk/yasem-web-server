@@ -28,6 +28,11 @@ public:
 public:
     PLUGIN_ERROR_CODES initialize();
     PLUGIN_ERROR_CODES deinitialize();
+
+    // Plugin interface
+public:
+    void register_dependencies();
+    void register_roles();
 };
 
 }

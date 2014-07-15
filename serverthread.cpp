@@ -57,7 +57,7 @@ void ServerThread::readyRead()
 
     if(browser == NULL)
     {
-        browser = dynamic_cast<BrowserPlugin*>(PluginManager::instance()->getByRole("browser"));
+        browser = dynamic_cast<BrowserPlugin*>(PluginManager::instance()->getByRole(ROLE_BROWSER));
         Q_ASSERT(browser != NULL);
         rootDir = browser->browserRootDir();
     }
@@ -111,7 +111,6 @@ void ServerThread::readyRead()
         }
         else
         {
-
             //QList<QMimeType> mimes = mimeDatabase.mimeTypesForFileName(filename);
             QMimeType mime = mimeDatabase.mimeTypeForFileNameAndData(filename, file);
             //qDebug() << "mime for " << filename << "is" << mime.name();
@@ -129,10 +128,6 @@ void ServerThread::readyRead()
                 os.writeRawData(rawData, rawData.size());
 
                 qDebug() << "data:" << rawData;
-
-
-                //qDebug() << "Wrote to client";
-
                 if (socket->state() == QTcpSocket::UnconnectedState) {
                     delete socket;
                     //qDebug() <<"Connection closed";
