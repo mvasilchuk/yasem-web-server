@@ -2,6 +2,7 @@
 #include "tcpresponse.h"
 #include "pluginmanager.h"
 #include "browserplugin.h"
+#include "webserverplugin.h"
 
 #include <QDateTime>
 #include <QFile>
@@ -15,6 +16,8 @@ ServerThread::ServerThread(qintptr ID, QObject *parent) :
     QThread(parent)
 {
     this->socketDescriptor = ID;
+    webServer = dynamic_cast<WebServerPlugin*>(this->parent()->parent());
+    Q_ASSERT(webServer);
     browser = NULL;
 }
 
@@ -52,20 +55,24 @@ void ServerThread::run()
 
 void ServerThread::readyRead()
 {
+
     // get the information
-   //QByteArray data = socket->readAll();
+    //QByteArray data = socket->readAll();
 
     if(browser == NULL)
     {
         browser = dynamic_cast<BrowserPlugin*>(PluginManager::instance()->getByRole(ROLE_BROWSER));
         Q_ASSERT(browser != NULL);
-        rootDir = browser->browserRootDir();
+
+        webServer->setRootDirectory(browser->browserRootDir());
     }
 
-   QHash<QString, QString> headers;
-   QString data;
+    QString rootDir = webServer->getRootDirectory();
 
-   if (socket->canReadLine()) {
+    QHash<QString, QString> headers;
+    QString data;
+
+    if (socket->canReadLine()) {
         QStringList tokens = QString(socket->readLine()).split(QRegExp("[ \r\n][ \r\n]*"));
 
         QString method = tokens[0];

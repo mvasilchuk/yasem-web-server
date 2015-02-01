@@ -10,6 +10,8 @@
 namespace yasem {
 
 class BrowserPlugin;
+class WebServerPlugin;
+
 class ServerThread : public QThread
 {
     Q_OBJECT
@@ -30,10 +32,8 @@ protected:
     QTcpSocket *socket;
     qintptr socketDescriptor;
     BrowserPlugin* browser;
-    QString rootDir;
     QMimeDatabase mimeDatabase;
-
-
+    WebServerPlugin* webServer;
 };
 
 }

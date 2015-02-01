@@ -3,6 +3,7 @@
 
 #include "stbplugin.h"
 #include "tcpserver.h"
+#include "webserverplugin.h"
 
 #include "serverthread.h"
 
@@ -11,7 +12,7 @@
 
 namespace yasem {
 
-class WEBSERVERSHARED_EXPORT WebServer: public QObject, public virtual Plugin
+class WEBSERVERSHARED_EXPORT WebServer: public QObject, public virtual WebServerPlugin
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID "com.mvas.yasem.WebServer/1.0" FILE "metadata.json")
@@ -22,7 +23,7 @@ class WEBSERVERSHARED_EXPORT WebServer: public QObject, public virtual Plugin
 public:
     WebServer();
 
-    TcpServer server;
+    TcpServer* tcpServer;
 
     // Plugin interface
 public:

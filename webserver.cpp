@@ -6,18 +6,18 @@ using namespace yasem;
 
 WebServer::WebServer()
 {
-
+    tcpServer = new TcpServer(this);
 }
 
 PLUGIN_ERROR_CODES WebServer::initialize()
 {
-    server.startServer();
+    tcpServer->startServer();
     return PLUGIN_ERROR_NO_ERROR;
 }
 
 PLUGIN_ERROR_CODES WebServer::deinitialize()
 {
-    server.stopServer();
+    tcpServer->stopServer();
     return PLUGIN_ERROR_NO_ERROR;
 }
 
@@ -28,5 +28,5 @@ void yasem::WebServer::register_dependencies()
 
 void yasem::WebServer::register_roles()
 {
-    register_role(ROLE_UNSPECIFIED);
+    register_role(ROLE_WEB_SERVER);
 }
