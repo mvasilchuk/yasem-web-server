@@ -1,7 +1,7 @@
 #include "serverthread.h"
 #include "tcpresponse.h"
 #include "pluginmanager.h"
-#include "browserplugin.h"
+#include "browserpluginobject.h"
 #include "webserverplugin.h"
 
 #include <QDateTime>
@@ -61,7 +61,7 @@ void ServerThread::readyRead()
 
     if(browser == NULL)
     {
-        browser = dynamic_cast<BrowserPlugin*>(PluginManager::instance()->getByRole(ROLE_BROWSER));
+        browser = dynamic_cast<BrowserPluginObject*>(PluginManager::instance()->getByRole(ROLE_BROWSER));
         Q_ASSERT(browser != NULL);
 
         webServer->setRootDirectory(browser->browserRootDir());

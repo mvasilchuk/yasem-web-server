@@ -4,40 +4,37 @@
 #
 #-------------------------------------------------
 
+
 VERSION = 0.1.0
+TARGET = yasem-web-server
+TEMPLATE = lib
+
+include($${top_srcdir}/common.pri)
 
 QT       += network
 
 QT       -= gui
 
-CONFIG += c++11
-
-TARGET = yasem-web-server
-TEMPLATE = lib
-
 DEFINES += WEBSERVER_LIBRARY
-
-INCLUDEPATH += ../../yasem-core
 
 SOURCES += webserver.cpp \
     serverthread.cpp \
     tcpserver.cpp \
-    tcpresponse.cpp
+    tcpresponse.cpp \
+    $${CORE_ROOT_DIR}/plugin.cpp \
+    $${CORE_ROOT_DIR}/webserverplugin.cpp
 
 HEADERS += webserver.h\
         webserver_global.h \
     serverthread.h \
     tcpserver.h \
-    tcpresponse.h
+    tcpresponse.h \
+    $${CORE_ROOT_DIR}/plugin.h
 
 unix {
     target.path = /usr/lib
     INSTALLS += target
 }
-
-
-include(../../common.pri)
-DESTDIR = $$DEFAULT_PLUGIN_DIR
 
 OTHER_FILES += \
     metadata.json \

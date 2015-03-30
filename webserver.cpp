@@ -4,18 +4,26 @@
 
 using namespace yasem;
 
-WebServer::WebServer()
+WebServer::WebServer(QObject* parent):
+    PluginQObject(parent),
+    Plugin(),
+    WebServerPlugin()
 {
     tcpServer = new TcpServer(this);
 }
 
-PLUGIN_ERROR_CODES WebServer::initialize()
+WebServer::~WebServer()
+{
+
+}
+
+PluginErrorCodes WebServer::initialize()
 {
     tcpServer->startServer();
     return PLUGIN_ERROR_NO_ERROR;
 }
 
-PLUGIN_ERROR_CODES WebServer::deinitialize()
+PluginErrorCodes WebServer::deinitialize()
 {
     tcpServer->stopServer();
     return PLUGIN_ERROR_NO_ERROR;

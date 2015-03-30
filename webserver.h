@@ -1,7 +1,7 @@
 #ifndef WEBSERVER_H
 #define WEBSERVER_H
 
-#include "stbplugin.h"
+#include "stbpluginobject.h"
 #include "tcpserver.h"
 #include "webserverplugin.h"
 
@@ -12,23 +12,24 @@
 
 namespace yasem {
 
-class WEBSERVERSHARED_EXPORT WebServer: public QObject, public virtual WebServerPlugin
+class WEBSERVERSHARED_EXPORT WebServer: public PluginQObject, public Plugin, public WebServerPlugin
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID "com.mvas.yasem.WebServer/1.0" FILE "metadata.json")
-    Q_INTERFACES(yasem::Plugin)
+    Q_INTERFACES(yasem::Plugin yasem::WebServerPlugin)
 
     Q_CLASSINFO("author", "Maxim Vasilchuk")
     Q_CLASSINFO("description", "Web server plugin for YASEM")
 public:
-    WebServer();
+    explicit WebServer(QObject* parent = 0);
+    virtual ~WebServer();
 
     TcpServer* tcpServer;
 
     // Plugin interface
 public:
-    PLUGIN_ERROR_CODES initialize();
-    PLUGIN_ERROR_CODES deinitialize();
+    PluginErrorCodes initialize();
+    PluginErrorCodes deinitialize();
 
     // Plugin interface
 public:
