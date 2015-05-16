@@ -28,7 +28,6 @@ public slots:
     void disconnected();
 
 protected:
-
     QTcpSocket *socket;
     qintptr socketDescriptor;
     BrowserPluginObject* browser;

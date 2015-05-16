@@ -21,15 +21,17 @@ SOURCES += webserver.cpp \
     serverthread.cpp \
     tcpserver.cpp \
     tcpresponse.cpp \
-    $${CORE_ROOT_DIR}/plugin.cpp \
-    $${CORE_ROOT_DIR}/webserverplugin.cpp
+    $${CORE_ROOT_DIR}/webserverplugin.cpp \
+    webserverpluginobject.cpp \
+    httpproxyserver.cpp
 
 HEADERS += webserver.h\
         webserver_global.h \
     serverthread.h \
     tcpserver.h \
     tcpresponse.h \
-    $${CORE_ROOT_DIR}/plugin.h
+    webserverpluginobject.h \
+    httpproxyserver.h
 
 unix {
     target.path = /usr/lib

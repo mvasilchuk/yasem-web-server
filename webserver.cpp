@@ -1,32 +1,17 @@
 #include "webserver.h"
-#include "tcpserver.h"
-
+#include "webserverpluginobject.h"
 
 using namespace yasem;
 
 WebServer::WebServer(QObject* parent):
-    PluginQObject(parent),
-    Plugin(),
-    WebServerPlugin()
+    Plugin(parent)
 {
-    tcpServer = new TcpServer(this);
+
 }
 
 WebServer::~WebServer()
 {
 
-}
-
-PluginErrorCodes WebServer::initialize()
-{
-    tcpServer->startServer();
-    return PLUGIN_ERROR_NO_ERROR;
-}
-
-PluginErrorCodes WebServer::deinitialize()
-{
-    tcpServer->stopServer();
-    return PLUGIN_ERROR_NO_ERROR;
 }
 
 void yasem::WebServer::register_dependencies()
@@ -36,5 +21,5 @@ void yasem::WebServer::register_dependencies()
 
 void yasem::WebServer::register_roles()
 {
-    register_role(ROLE_WEB_SERVER);
+    register_role(ROLE_WEB_SERVER, new WebServerPluginObject(this));
 }

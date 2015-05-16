@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QTcpServer>
+#include <QSet>
 
 namespace yasem {
 
@@ -22,6 +23,10 @@ public slots:
 
 protected:
    void incomingConnection(qintptr socketDescriptor);
+   int m_max_connections;
+   int m_connections_count;
+   QSet<QThread*> m_thread_set;
+   QThread* m_next_thread;
 
 };
 

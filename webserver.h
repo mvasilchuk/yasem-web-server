@@ -12,11 +12,11 @@
 
 namespace yasem {
 
-class WEBSERVERSHARED_EXPORT WebServer: public PluginQObject, public Plugin, public WebServerPlugin
+class WEBSERVERSHARED_EXPORT WebServer:  public Plugin
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID "com.mvas.yasem.WebServer/1.0" FILE "metadata.json")
-    Q_INTERFACES(yasem::Plugin yasem::WebServerPlugin)
+    Q_INTERFACES(yasem::Plugin)
 
     Q_CLASSINFO("author", "Maxim Vasilchuk")
     Q_CLASSINFO("description", "Web server plugin for YASEM")
@@ -24,14 +24,6 @@ public:
     explicit WebServer(QObject* parent = 0);
     virtual ~WebServer();
 
-    TcpServer* tcpServer;
-
-    // Plugin interface
-public:
-    PluginErrorCodes initialize();
-    PluginErrorCodes deinitialize();
-
-    // Plugin interface
 public:
     void register_dependencies();
     void register_roles();

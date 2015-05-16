@@ -9,6 +9,7 @@
 #include <QMimeDatabase>
 #include <QMimeType>
 #include <QDataStream>
+#include <QNetworkRequest>
 
 using namespace yasem;
 
@@ -24,9 +25,10 @@ ServerThread::ServerThread(qintptr ID, QObject *parent) :
 void ServerThread::run()
 {
     // thread starts here
-    //qDebug() << " Thread started";
+    qDebug() << " Thread started";
 
     socket = new QTcpSocket();
+    socket->moveToThread(this);
 
     // set the ID
     if(!socket->setSocketDescriptor(this->socketDescriptor))
@@ -44,7 +46,7 @@ void ServerThread::run()
     connect(socket, SIGNAL(disconnected()), this, SLOT(disconnected()));
 
     // We'll have multiple clients, we want to know which is which
-    //qDebug() << socketDescriptor << " Client connected";
+    qDebug() << socketDescriptor << " Client connected";
 
     // make this thread a loop,
     // thread will stay alive so that signal/slot to function properly
@@ -56,9 +58,6 @@ void ServerThread::run()
 void ServerThread::readyRead()
 {
 
-    // get the information
-    //QByteArray data = socket->readAll();
-
     if(browser == NULL)
     {
         browser = dynamic_cast<BrowserPluginObject*>(PluginManager::instance()->getByRole(ROLE_BROWSER));
@@ -69,14 +68,18 @@ void ServerThread::readyRead()
 
     QString rootDir = webServer->getRootDirectory();
 
-    QHash<QString, QString> headers;
+    QHash<QByteArray, QByteArray> headers;
     QString data;
 
     if (socket->canReadLine()) {
-        QStringList tokens = QString(socket->readLine()).split(QRegExp("[ \r\n][ \r\n]*"));
+        QString first_line = socket->readLine();
+        //QStringList tokens = first_line.split(QRegExp("[ \r\n][ \r\n]*"));
+        QStringList tokens = first_line.split(" ");
 
         QString method = tokens[0];
         QString path = tokens[1];
+
+        DEBUG() << "first_line" << first_line;
 
         bool parseHeaders = true;
         while(socket->canReadLine())
@@ -91,7 +94,7 @@ void ServerThread::readyRead()
             {
                 QStringList header = line.split(":");
                 QString value = header.at(1);
-                headers.insert(header.at(0).trimmed(), value.replace("\r\n", "").trimmed());
+                headers.insert(header.at(0).trimmed().toUtf8(), value.replace("\r\n", "").trimmed().toUtf8());
             }
             else
             {
@@ -120,7 +123,7 @@ void ServerThread::readyRead()
         {
             //QList<QMimeType> mimes = mimeDatabase.mimeTypesForFileName(filename);
             QMimeType mime = mimeDatabase.mimeTypeForFileNameAndData(filename, file);
-            //qDebug() << "mime for " << filename << "is" << mime.name();
+            qDebug() << "mime for " << filename << "is" << mime.name();
 
             QByteArray data = file->readAll();
             response.setHeader("Content-Type", mime.name());
@@ -137,7 +140,7 @@ void ServerThread::readyRead()
                 qDebug() << "data:" << rawData;
                 if (socket->state() == QTcpSocket::UnconnectedState) {
                     delete socket;
-                    //qDebug() <<"Connection closed";
+                    qDebug() <<"Connection closed";
                 }
             }
         }
@@ -151,8 +154,13 @@ void ServerThread::readyRead()
 
 void ServerThread::disconnected()
 {
-    //qDebug() << socketDescriptor << " Disconnected";
+    qDebug() << socketDescriptor << " Disconnected";
 
-    socket->deleteLater();
-    exit(0);
+    if(socket != NULL && socket->isOpen())
+    {
+        socket->close();
+        socket->deleteLater();
+    }
+    DEBUG() << "2";
+    socket->thread()->quit();
 }
