@@ -10,30 +10,23 @@
 
 using namespace yasem;
 
-bool HttpProxyThread::use_thread_queue = true;
-QQueue<HttpProxyThread*> HttpProxyThread::m_socket_thread_queue;
-
-HttpProxyServer::HttpProxyServer(QObject *parent) :
-    QTcpServer(parent),
-    m_max_reqests(10)
+HttpProxyServer::HttpProxyServer(Plugin *plugin):
+    AbstractHttpProxy(plugin),
+    m_server(new HttpProxyTcpServer(this))
 {
     connect(&m_socket_timer, &QTimer::timeout, [=](){
-        //DEBUG() << "timeout";
-        if(!HttpProxyThread::m_socket_thread_queue.isEmpty())
+        if(!m_socket_thread_queue.isEmpty())
         {
-            HttpProxyThread::m_socket_thread_queue.dequeue()->m_paused = false;
-            //if(HttpProxyThread::m_socket_thread_queue.isEmpty())
-            //    stopTimer();
+            m_socket_thread_queue.dequeue()->unpause();
         }
     });
 }
 
 void HttpProxyServer::startTimer()
 {
-    DEBUG() << "trying to start timer";
-    if(HttpProxyThread::use_thread_queue || m_max_reqests > 0)
+    if(getMaxRequestPerSecond() > 0)
     {
-        m_socket_timer.setInterval(1000 / m_max_reqests);
+        m_socket_timer.setInterval(1000 / getMaxRequestPerSecond());
         m_socket_timer.setSingleShot(false);
         m_socket_timer.start();
         DEBUG() << "timer started";
@@ -42,7 +35,6 @@ void HttpProxyServer::startTimer()
 
 void HttpProxyServer::stopTimer()
 {
-    DEBUG() << "trying to stop timer";
     if(m_socket_timer.isActive())
     {
         m_socket_timer.stop();
@@ -50,40 +42,51 @@ void HttpProxyServer::stopTimer()
     }
 }
 
-void HttpProxyServer::startServer()
+bool HttpProxyServer::startServer()
 {
     startTimer();
-    listen(QHostAddress::Any, 8089);
-    qDebug() << "Proxy server running at port" << serverPort();
+    setHostHame("127.0.0.1");
+    setPort(8087);
+
+    m_server->listen(QHostAddress(hostName()), port());
+    qDebug() << qPrintable(QString("Proxy server running at %1:%2").arg(m_server->serverAddress().toString()).arg(m_server->serverPort()));
+    return m_server->isListening();
 }
 
-void HttpProxyServer::stopServer()
+bool HttpProxyServer::stopServer()
 {
-    if(isListening())
-        close();
+    if(m_server->isListening())
+    {
+        m_server->close();
+        DEBUG() << "Http proxy stopped";
+    }
+    stopTimer();
+    return true;
 }
 
-void HttpProxyServer::setMaxRequestsPerSecond(quint8 max_req)
-{
-    this->m_max_reqests = max_req;
-    HttpProxyThread::use_thread_queue = (m_max_reqests == 0);
-}
 
-void HttpProxyServer::incomingConnection(qintptr handle)
-{
-    //DEBUG() << "incoming";
-    //if(!m_socket_timer.isActive())
-    //    startTimer();
-    HttpProxyThread* thread = new HttpProxyThread(handle, this);
-    thread->start();
-}
-
-HttpProxyThread::HttpProxyThread(qintptr ID, QObject *parent):
-    QThread(parent),
+HttpProxyThread::HttpProxyThread(qintptr ID, HttpProxyServer *proxy_server):
+    QThread(proxy_server),
     m_socket_descriptor(ID),
+    m_proxy_server(proxy_server),
     m_paused(true)
 {
 
+}
+
+bool HttpProxyThread::isPaused() const
+{
+    return m_paused;
+}
+
+void HttpProxyThread::pause()
+{
+    m_paused = true;
+}
+
+void HttpProxyThread::unpause()
+{
+    m_paused = false;
 }
 
 void HttpProxyThread::run()
@@ -97,16 +100,7 @@ void HttpProxyThread::run()
     connect(m_proxy_socket, &QTcpSocket::readyRead, [=](){
         m_socket->write(m_proxy_socket->readAll());
     });
-    connect(m_proxy_socket, QTcpSocket::disconnected, [=](){
-        DEBUG() << "close connection";
-        if (m_proxy_socket) {
-            if (m_socket)
-                m_socket->disconnectFromHost();
-            if (m_proxy_socket->error() != QTcpSocket::RemoteHostClosedError)
-                qWarning() << "Error for:" << m_proxy_socket->errorString();
-            m_proxy_socket->deleteLater();
-        }
-    });
+
     connect(m_proxy_socket,
             static_cast<void (QTcpSocket::*)(QAbstractSocket::SocketError)>(&QTcpSocket::error),
              [=](QAbstractSocket::SocketError err){
@@ -135,22 +129,42 @@ void HttpProxyThread::run()
     });
     connect(m_socket, &QTcpSocket::disconnected, [=](){
         //DEBUG() << "socket disconnected";
-        m_socket->deleteLater();
+
     });
-    connect(m_socket,
-            static_cast<void (QTcpSocket::*)(QAbstractSocket::SocketError)>(&QTcpSocket::error),
-             [=](QAbstractSocket::SocketError err){
-        ERROR() << err;
-    });
+
+    auto on_disconnect = [=](){
+        DEBUG() << "close connection";
+        if (m_socket != NULL)
+        {
+            if (m_socket->error() != QAbstractSocket::RemoteHostClosedError)
+                WARN() << "Error for:" << m_socket->errorString();
+            m_socket->disconnect();
+            if(m_socket->state() == QAbstractSocket::ConnectedState)
+                m_socket->disconnectFromHost();
+            m_socket->deleteLater();
+        }
+        if (m_proxy_socket != NULL) {
+            if (m_proxy_socket->error() != QAbstractSocket::RemoteHostClosedError)
+                WARN() << "Error for:" << m_proxy_socket->errorString();
+            m_proxy_socket->disconnect();
+            if(m_proxy_socket->state() == QAbstractSocket::ConnectedState)
+                m_proxy_socket->disconnectFromHost();
+
+            m_proxy_socket->deleteLater();
+        }
+    };
+
+    connect(m_socket, &QTcpSocket::disconnected, on_disconnect);
+    connect(m_proxy_socket, &QTcpSocket::disconnected, on_disconnect);
 
     // We'll have multiple clients, we want to know which is which
     //qDebug() << m_socket_descriptor << " http client connected";
 
-    if(HttpProxyThread::use_thread_queue)
+    if(m_proxy_server->getMaxRequestPerSecond() > 0)
     {
         m_paused = true;
-        HttpProxyThread::m_socket_thread_queue.enqueue(this);
     }
+    m_proxy_server->addToQueue(this);
 
     exec();
 }
@@ -160,7 +174,7 @@ void HttpProxyThread::processQuery()
     //DEBUG() << "process query";
     QByteArray requestData = m_socket->readAll();
 
-    while(HttpProxyThread::use_thread_queue && m_paused)
+    while(m_proxy_server->getMaxRequestPerSecond() > 0 && isPaused())
     {
         //DEBUG() << "thread waiting" << m_socket->thread() << "of" << HttpProxyThread::m_socket_queue.count();
         m_socket->thread()->msleep(1);
@@ -171,6 +185,7 @@ void HttpProxyThread::processQuery()
     requestData.remove(0, pos + 2);
 
     QList<QByteArray> entries = requestLine.split(' ');
+
     QByteArray method = entries.at(0);
     QByteArray address = entries.at(1);
     QByteArray version = entries.at(2);
@@ -187,22 +202,67 @@ void HttpProxyThread::processQuery()
     QString req = url.path();
     if (url.hasQuery())
         req.append('?').append(url.query());
-    requestLine = method + " " + req.toUtf8() + " " + version + "\r\n";
+    requestLine = method + " " + QUrl(req).toEncoded() + " " + version + "\r\n";
     requestData.prepend(requestLine);
 
-    if(HttpProxyThread::use_thread_queue)
+    if(m_proxy_server->getMaxRequestPerSecond() > 0)
     {
         m_paused = true;
-        HttpProxyThread::m_socket_thread_queue.enqueue(this);
     }
+
+     m_proxy_server->addToQueue(this);
 
     if (m_proxy_socket->isOpen()) {
         m_proxy_socket->write(requestData);
     } else {
         m_proxy_socket->setProperty("requestData", requestData);
 
-        //DEBUG() << "queue" << HttpProxyThread::m_socket_thread_queue.count();
-        //DEBUG() << "Connecting to " << host << port;
         m_proxy_socket->connectToHost(host, port);
     }
+}
+
+
+PluginObjectResult yasem::HttpProxyServer::init()
+{
+    return PLUGIN_OBJECT_RESULT_OK;
+}
+
+PluginObjectResult yasem::HttpProxyServer::deinit()
+{
+    return PLUGIN_OBJECT_RESULT_OK;
+}
+
+
+bool yasem::HttpProxyServer::isRunning()
+{
+    return m_server->isListening();
+}
+
+QQueue<HttpProxyThread *> HttpProxyServer::getThreadQueue()
+{
+    return m_socket_thread_queue;
+}
+
+void HttpProxyServer::addToQueue(HttpProxyThread *socket_thread)
+{
+    m_socket_thread_queue.enqueue(socket_thread);
+}
+
+
+void HttpProxyTcpServer::incomingConnection(qintptr handle)
+{
+    HttpProxyThread* thread = new HttpProxyThread(handle, static_cast<HttpProxyServer*>(parent()));
+    thread->start();
+}
+
+
+HttpProxyTcpServer::HttpProxyTcpServer(QObject *parent):
+    QTcpServer(parent)
+{
+
+}
+
+HttpProxyTcpServer::~HttpProxyTcpServer()
+{
+
 }

@@ -8,7 +8,6 @@
 namespace yasem
 {
 class TcpServer;
-class HttpProxyServer;
 class WebServerPluginObject : public WebServerPlugin
 {
     Q_OBJECT
@@ -21,7 +20,6 @@ signals:
 public slots:
 protected:
     TcpServer* m_tcp_server;
-    HttpProxyServer* m_http_proxy;
 
     // AbstractPluginObject interface
 public:
