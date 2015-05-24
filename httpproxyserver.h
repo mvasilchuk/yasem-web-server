@@ -83,6 +83,7 @@ public:
     bool isRunning();
     QQueue<HttpProxyThread*> getThreadQueue();
     void addToQueue(HttpProxyThread* socket_thread);
+    QQueue<HttpProxyThread*> queue() const;
 
 };
 

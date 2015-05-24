@@ -15,6 +15,7 @@ HttpProxyServer::HttpProxyServer(Plugin *plugin):
     m_server(new HttpProxyTcpServer(this))
 {
     connect(&m_socket_timer, &QTimer::timeout, [=](){
+        //DEBUG() << "left queries" << m_socket_thread_queue.size();
         if(!m_socket_thread_queue.isEmpty())
         {
             m_socket_thread_queue.dequeue()->unpause();
@@ -162,7 +163,7 @@ void HttpProxyThread::run()
 
     if(m_proxy_server->getMaxRequestPerSecond() > 0)
     {
-        m_paused = true;
+        this->pause();
     }
     m_proxy_server->addToQueue(this);
 
@@ -176,7 +177,7 @@ void HttpProxyThread::processQuery()
 
     while(m_proxy_server->getMaxRequestPerSecond() > 0 && isPaused())
     {
-        //DEBUG() << "thread waiting" << m_socket->thread() << "of" << HttpProxyThread::m_socket_queue.count();
+        //DEBUG() << "thread waiting" << m_socket->thread() << "of" << m_proxy_server->queue().size();
         m_socket->thread()->msleep(1);
     }
 
@@ -205,13 +206,6 @@ void HttpProxyThread::processQuery()
     requestLine = method + " " + QUrl(req).toEncoded() + " " + version + "\r\n";
     requestData.prepend(requestLine);
 
-    if(m_proxy_server->getMaxRequestPerSecond() > 0)
-    {
-        m_paused = true;
-    }
-
-     m_proxy_server->addToQueue(this);
-
     if (m_proxy_socket->isOpen()) {
         m_proxy_socket->write(requestData);
     } else {
@@ -219,6 +213,12 @@ void HttpProxyThread::processQuery()
 
         m_proxy_socket->connectToHost(host, port);
     }
+
+    //if(m_proxy_server->getMaxRequestPerSecond() > 0)
+    //{
+    //    m_paused = true;
+    //}
+    //m_proxy_server->addToQueue(this);
 }
 
 
@@ -246,6 +246,11 @@ QQueue<HttpProxyThread *> HttpProxyServer::getThreadQueue()
 void HttpProxyServer::addToQueue(HttpProxyThread *socket_thread)
 {
     m_socket_thread_queue.enqueue(socket_thread);
+}
+
+QQueue<HttpProxyThread *> HttpProxyServer::queue() const
+{
+    return m_socket_thread_queue;
 }
 
 
