@@ -17,7 +17,7 @@ void TcpServer::startServer()
 {
     int port = Core::instance()->settings()->value("web-server/port", 9999).toInt();
 
-    if(!this->listen(QHostAddress::Any, port))
+    if(!this->listen(QHostAddress::LocalHost, port))
     {
         qDebug() << "Could not start server:" << this->errorString();
     }
