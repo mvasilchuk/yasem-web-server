@@ -17,6 +17,7 @@ class ServerThread : public QThread
     Q_OBJECT
 public:
     explicit ServerThread(qintptr ID, QObject *parent = 0);
+    virtual ~ServerThread();
 
     void run();
 

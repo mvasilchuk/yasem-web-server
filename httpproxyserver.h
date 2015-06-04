@@ -31,6 +31,7 @@ class HttpProxyThread: public QThread
     Q_OBJECT
 public:
     explicit HttpProxyThread(qintptr ID, HttpProxyServer *proxy_server);
+    virtual ~HttpProxyThread();
     // QThread interface
 
     bool isPaused() const;
@@ -57,6 +58,7 @@ class HttpProxyServer: public AbstractHttpProxy
     Q_OBJECT
 public:
     explicit HttpProxyServer(Plugin *plugin);
+    virtual ~HttpProxyServer();
 
 signals:
 

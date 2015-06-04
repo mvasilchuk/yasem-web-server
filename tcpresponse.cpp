@@ -9,6 +9,11 @@ TcpResponse::TcpResponse(QObject *parent) :
 {
 }
 
+TcpResponse::~TcpResponse()
+{
+
+}
+
 void TcpResponse::setStatus(int status)
 {
     this->status = status;

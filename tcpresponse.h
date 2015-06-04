@@ -14,6 +14,7 @@ class TcpResponse : public QObject
     Q_OBJECT
 public:
     explicit TcpResponse(QObject *parent = 0);
+    virtual ~TcpResponse();
 
 
 

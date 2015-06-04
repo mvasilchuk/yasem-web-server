@@ -23,6 +23,11 @@ HttpProxyServer::HttpProxyServer(Plugin *plugin):
     });
 }
 
+HttpProxyServer::~HttpProxyServer()
+{
+
+}
+
 void HttpProxyServer::startTimer()
 {
     if(getMaxRequestPerSecond() > 0)
@@ -71,6 +76,11 @@ HttpProxyThread::HttpProxyThread(qintptr ID, HttpProxyServer *proxy_server):
     m_socket_descriptor(ID),
     m_proxy_server(proxy_server),
     m_paused(true)
+{
+
+}
+
+HttpProxyThread::~HttpProxyThread()
 {
 
 }

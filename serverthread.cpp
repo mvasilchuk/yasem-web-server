@@ -22,6 +22,11 @@ ServerThread::ServerThread(qintptr ID, QObject *parent) :
     browser = NULL;
 }
 
+ServerThread::~ServerThread()
+{
+
+}
+
 void ServerThread::run()
 {
     // thread starts here
