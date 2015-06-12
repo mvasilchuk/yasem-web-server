@@ -34,7 +34,8 @@ HEADERS += webserver.h\
     webserverpluginobject.h \
     httpproxyserver.h \
     $${CORE_ROOT_DIR}/browserpluginobject.h \
-    $${CORE_ROOT_DIR}/abstracthttpproxy.h
+    $${CORE_ROOT_DIR}/abstracthttpproxy.h \
+    $${CORE_ROOT_DIR}/guipluginobject.h
 
 unix {
     target.path = /usr/lib
