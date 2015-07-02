@@ -3,6 +3,7 @@
 #include "pluginmanager.h"
 #include "browserpluginobject.h"
 #include "webserverplugin.h"
+#include "macros.h"
 
 #include <QDateTime>
 #include <QFile>

@@ -1,11 +1,7 @@
 #ifndef WEBSERVER_H
 #define WEBSERVER_H
 
-#include "stbpluginobject.h"
-#include "tcpserver.h"
-#include "webserverplugin.h"
-
-#include "serverthread.h"
+#include "plugin.h"
 
 #include "webserver_global.h"
 #include <QTcpServer>
