@@ -19,7 +19,9 @@ class WEBSERVERSHARED_EXPORT WebServer:  public Plugin
     Q_INTERFACES(yasem::Plugin)
 
     Q_CLASSINFO("author", "Maxim Vasilchuk")
-    Q_CLASSINFO("description", "Web server plugin for YASEM")
+    Q_CLASSINFO("description", "Simple web server")
+    Q_CLASSINFO("version", MODULE_VERSION)
+    Q_CLASSINFO("revision", GIT_VERSION)
 public:
     explicit WebServer(QObject* parent = 0);
     virtual ~WebServer();
