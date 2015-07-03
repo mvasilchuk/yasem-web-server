@@ -8,11 +8,11 @@
 namespace yasem
 {
 class TcpServer;
-class WebServerPluginObject : public WebServerPlugin
+class WebServerPluginObject : public SDK::WebServerPlugin
 {
     Q_OBJECT
 public:
-    explicit WebServerPluginObject(Plugin* plugin);
+    explicit WebServerPluginObject(SDK::Plugin* plugin);
     virtual ~WebServerPluginObject();
 
 signals:
@@ -23,8 +23,8 @@ protected:
 
     // AbstractPluginObject interface
 public:
-    PluginObjectResult init();
-    PluginObjectResult deinit();
+    SDK::PluginObjectResult init();
+    SDK::PluginObjectResult deinit();
 };
 
 }

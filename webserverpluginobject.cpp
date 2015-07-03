@@ -4,7 +4,7 @@
 
 using namespace yasem;
 
-WebServerPluginObject::WebServerPluginObject(Plugin* plugin) :
+WebServerPluginObject::WebServerPluginObject(SDK::Plugin* plugin) :
     WebServerPlugin(plugin),
     m_tcp_server(new TcpServer(this))
 {
@@ -16,15 +16,15 @@ WebServerPluginObject::~WebServerPluginObject()
 
 }
 
-PluginObjectResult WebServerPluginObject::init()
+SDK::PluginObjectResult WebServerPluginObject::init()
 {
     m_tcp_server->startServer();
-    return PLUGIN_OBJECT_RESULT_OK;
+    return SDK::PLUGIN_OBJECT_RESULT_OK;
 }
 
-PluginObjectResult WebServerPluginObject::deinit()
+SDK::PluginObjectResult WebServerPluginObject::deinit()
 {
     m_tcp_server->stopServer();
-    return PLUGIN_OBJECT_RESULT_OK;
+    return SDK::PLUGIN_OBJECT_RESULT_OK;
 }
 

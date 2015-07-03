@@ -9,8 +9,10 @@
 
 namespace yasem {
 
+namespace SDK {
 class BrowserPluginObject;
 class WebServerPlugin;
+}
 
 class ServerThread : public QThread
 {
@@ -31,9 +33,9 @@ public slots:
 protected:
     QTcpSocket *socket;
     qintptr socketDescriptor;
-    BrowserPluginObject* browser;
+    SDK::BrowserPluginObject* browser;
     QMimeDatabase mimeDatabase;
-    WebServerPlugin* webServer;
+    SDK::WebServerPlugin* webServer;
 };
 
 }

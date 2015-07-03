@@ -18,7 +18,7 @@ ServerThread::ServerThread(qintptr ID, QObject *parent) :
     QThread(parent)
 {
     this->socketDescriptor = ID;
-    webServer = dynamic_cast<WebServerPlugin*>(this->parent()->parent());
+    webServer = dynamic_cast<SDK::WebServerPlugin*>(this->parent()->parent());
     Q_ASSERT(webServer);
     browser = NULL;
 }
@@ -66,7 +66,7 @@ void ServerThread::readyRead()
 
     if(browser == NULL)
     {
-        browser = dynamic_cast<BrowserPluginObject*>(PluginManager::instance()->getByRole(ROLE_BROWSER));
+        browser = __get_plugin<SDK::BrowserPluginObject*>(SDK::ROLE_BROWSER);
         Q_ASSERT(browser != NULL);
 
         webServer->setRootDirectory(browser->browserRootDir());

@@ -8,11 +8,11 @@
 
 namespace yasem {
 
-class WEBSERVERSHARED_EXPORT WebServer:  public Plugin
+class WEBSERVERSHARED_EXPORT WebServer:  public SDK::Plugin
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID "com.mvas.yasem.WebServer/1.0" FILE "metadata.json")
-    Q_INTERFACES(yasem::Plugin)
+    Q_INTERFACES(yasem::SDK::Plugin)
 
     Q_CLASSINFO("author", "Maxim Vasilchuk")
     Q_CLASSINFO("description", "Simple web server")

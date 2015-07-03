@@ -53,11 +53,11 @@ protected:
     volatile bool m_paused;
 };
 
-class HttpProxyServer: public AbstractHttpProxy
+class HttpProxyServer: public SDK::AbstractHttpProxy
 {
     Q_OBJECT
 public:
-    explicit HttpProxyServer(Plugin *plugin);
+    explicit HttpProxyServer(SDK::Plugin *plugin);
     virtual ~HttpProxyServer();
 
 signals:
@@ -75,8 +75,8 @@ protected:
 
     // AbstractPluginObject interface
 public:
-    PluginObjectResult init();
-    PluginObjectResult deinit();
+    SDK::PluginObjectResult init();
+    SDK::PluginObjectResult deinit();
 
     // AbstractHttpProxy interface
 public:

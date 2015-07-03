@@ -10,8 +10,8 @@
 
 using namespace yasem;
 
-HttpProxyServer::HttpProxyServer(Plugin *plugin):
-    AbstractHttpProxy(plugin),
+HttpProxyServer::HttpProxyServer(SDK::Plugin *plugin):
+    SDK::AbstractHttpProxy(plugin),
     m_server(new HttpProxyTcpServer(this))
 {
     connect(&m_socket_timer, &QTimer::timeout, [=](){
@@ -232,14 +232,14 @@ void HttpProxyThread::processQuery()
 }
 
 
-PluginObjectResult yasem::HttpProxyServer::init()
+SDK::PluginObjectResult yasem::HttpProxyServer::init()
 {
-    return PLUGIN_OBJECT_RESULT_OK;
+    return SDK::PLUGIN_OBJECT_RESULT_OK;
 }
 
-PluginObjectResult yasem::HttpProxyServer::deinit()
+SDK::PluginObjectResult yasem::HttpProxyServer::deinit()
 {
-    return PLUGIN_OBJECT_RESULT_OK;
+    return SDK::PLUGIN_OBJECT_RESULT_OK;
 }
 
 

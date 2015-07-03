@@ -15,7 +15,7 @@ TcpServer::TcpServer(QObject *parent) :
 
 void TcpServer::startServer()
 {
-    int port = Core::instance()->settings()->value("web-server/port", 9999).toInt();
+    int port = SDK::Core::instance()->settings()->value("web-server/port", 9999).toInt();
 
     if(!this->listen(QHostAddress::LocalHost, port))
     {
