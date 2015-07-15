@@ -53,7 +53,7 @@ protected:
     volatile bool m_paused;
 };
 
-class HttpProxyServer: public SDK::AbstractHttpProxy
+class HttpProxyServer: public SDK::HttpProxy
 {
     Q_OBJECT
 public:

@@ -1,7 +1,7 @@
 #include "serverthread.h"
 #include "tcpresponse.h"
 #include "pluginmanager.h"
-#include "browserpluginobject.h"
+#include "browser.h"
 #include "webserverplugin.h"
 #include "macros.h"
 
@@ -66,7 +66,7 @@ void ServerThread::readyRead()
 
     if(browser == NULL)
     {
-        browser = __get_plugin<SDK::BrowserPluginObject*>(SDK::ROLE_BROWSER);
+        browser = __get_plugin<SDK::Browser*>(SDK::ROLE_BROWSER);
         Q_ASSERT(browser != NULL);
 
         webServer->setRootDirectory(browser->browserRootDir());

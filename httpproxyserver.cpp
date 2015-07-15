@@ -11,7 +11,7 @@
 using namespace yasem;
 
 HttpProxyServer::HttpProxyServer(SDK::Plugin *plugin):
-    SDK::AbstractHttpProxy(plugin),
+    SDK::HttpProxy(plugin),
     m_server(new HttpProxyTcpServer(this))
 {
     connect(&m_socket_timer, &QTimer::timeout, [=](){

@@ -10,7 +10,7 @@
 namespace yasem {
 
 namespace SDK {
-class BrowserPluginObject;
+class Browser;
 class WebServerPlugin;
 }
 
@@ -33,7 +33,7 @@ public slots:
 protected:
     QTcpSocket *socket;
     qintptr socketDescriptor;
-    SDK::BrowserPluginObject* browser;
+    SDK::Browser* browser;
     QMimeDatabase mimeDatabase;
     SDK::WebServerPlugin* webServer;
 };
