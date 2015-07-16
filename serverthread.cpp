@@ -66,7 +66,7 @@ void ServerThread::readyRead()
 
     if(browser == NULL)
     {
-        browser = __get_plugin<SDK::Browser*>(SDK::ROLE_BROWSER);
+        browser = SDK::__get_plugin<SDK::Browser*>(SDK::ROLE_BROWSER);
         Q_ASSERT(browser != NULL);
 
         webServer->setRootDirectory(browser->browserRootDir());
