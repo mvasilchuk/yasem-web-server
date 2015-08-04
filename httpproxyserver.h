@@ -9,6 +9,7 @@
 #include <QTimer>
 #include <QTcpServer>
 #include <QTcpSocket>
+#include <QPointer>
 
 namespace yasem {
 
@@ -46,8 +47,8 @@ private slots:
 
 protected:
     qintptr m_socket_descriptor;
-    QTcpSocket* m_socket;
-    QTcpSocket* m_proxy_socket;
+    QPointer<QTcpSocket> m_socket;
+    QPointer<QTcpSocket> m_proxy_socket;
     HttpProxyServer* m_proxy_server;
 
     volatile bool m_paused;

@@ -25,7 +25,8 @@ HttpProxyServer::HttpProxyServer(SDK::Plugin *plugin):
 
 HttpProxyServer::~HttpProxyServer()
 {
-
+    STUB();
+    delete m_server;
 }
 
 void HttpProxyServer::startTimer()
