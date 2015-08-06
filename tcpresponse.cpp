@@ -16,12 +16,12 @@ TcpResponse::~TcpResponse()
 
 void TcpResponse::setStatus(int status)
 {
-    this->status = status;
+    this->m_status = status;
 }
 
 int TcpResponse::getStatus()
 {
-    return this->status;
+    return this->m_status;
 }
 
 void TcpResponse::setHeader(const QString &name, const QString &value)
@@ -31,7 +31,7 @@ void TcpResponse::setHeader(const QString &name, const QString &value)
 
 void TcpResponse::setData(const QByteArray &data)
 {
-    this->data = data;
+    this->m_data = data;
 }
 
 QString TcpResponse::toString()
@@ -41,7 +41,7 @@ QString TcpResponse::toString()
     {
         headerList.append(QString("%1:%2\r\n").arg(name).arg(headers.value(name)));
     }
-    return QString("HTTP/1.0 %1 %2\r\n%3\r\n%4").arg(status).arg("Ok").arg(headerList.join("")).arg(QString(data));
+    return QString("HTTP/1.0 %1 %2\r\n%3\r\n%4").arg(m_status).arg("Ok").arg(headerList.join("")).arg(QString(m_data));
 }
 
 QByteArray TcpResponse::getData()
@@ -52,10 +52,10 @@ QByteArray TcpResponse::getData()
          headerList.append(QString("%1:%2\r\n").arg(name).arg(headers.value(name)));
     }
 
-    QString head = QString("HTTP/1.0 %1 %2\r\n%3\r\n").arg(status).arg("Ok").arg(headerList.join(""));
+    QString head = QString("HTTP/1.0 %1 %2\r\n%3\r\n").arg(m_status).arg("Ok").arg(headerList.join(""));
 
     QByteArray arr;
     arr.append(head.toLocal8Bit());
-    arr.append(data);
+    arr.append(m_data);
     return arr;
 }

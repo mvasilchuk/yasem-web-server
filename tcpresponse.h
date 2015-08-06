@@ -19,17 +19,17 @@ public:
 
 
 protected:
-    int status;
+    int m_status;
     QHash<QString, QString> headers;
-    QByteArray data;
+    QByteArray m_data;
 
 signals:
 
 public slots:
-    void setStatus(int status);
+    void setStatus(int m_status);
     int getStatus();
     void setHeader(const QString &name, const QString &value);
-    void setData(const QByteArray &data);
+    void setData(const QByteArray &m_data);
     QString toString();
     QByteArray getData();
 };

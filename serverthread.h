@@ -6,6 +6,7 @@
 #include <QTcpSocket>
 #include <QHash>
 #include <QMimeDatabase>
+#include <QSharedPointer>
 
 namespace yasem {
 
@@ -33,7 +34,7 @@ public slots:
 protected:
     QTcpSocket *socket;
     qintptr socketDescriptor;
-    SDK::Browser* browser;
+    QSharedPointer<SDK::Browser> browser;
     QMimeDatabase mimeDatabase;
     SDK::WebServerPlugin* webServer;
 };

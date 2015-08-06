@@ -20,12 +20,12 @@ ServerThread::ServerThread(qintptr ID, QObject *parent) :
     this->socketDescriptor = ID;
     webServer = dynamic_cast<SDK::WebServerPlugin*>(this->parent()->parent());
     Q_ASSERT(webServer);
-    browser = NULL;
 }
 
 ServerThread::~ServerThread()
 {
-
+    if(webServer)
+        webServer->deleteLater();
 }
 
 void ServerThread::run()
@@ -64,12 +64,9 @@ void ServerThread::run()
 void ServerThread::readyRead()
 {
 
-    if(browser == NULL)
+    if(webServer->getRootDirectory().isEmpty())
     {
-        browser = SDK::__get_plugin<SDK::Browser*>(SDK::ROLE_BROWSER);
-        Q_ASSERT(browser != NULL);
-
-        webServer->setRootDirectory(browser->browserRootDir());
+        webServer->setRootDirectory(SDK::Browser::instance()->browserRootDir());
     }
 
     QString rootDir = webServer->getRootDirectory();
