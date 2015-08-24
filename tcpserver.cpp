@@ -8,14 +8,19 @@ using namespace yasem;
 TcpServer::TcpServer(QObject *parent) :
     QTcpServer(parent),
     m_max_connections(1),
-    m_connections_count(0),
+    m_connections_count(20),
     m_next_thread(NULL)
 {
 }
 
+TcpServer::~TcpServer()
+{
+
+}
+
 void TcpServer::startServer()
 {
-    int port = SDK::Core::instance()->settings()->value("web-server/port", 9999).toInt();
+    int port = SDK::Core::instance()->settings()->value("web-server/port", 19999).toInt();
 
     if(!this->listen(QHostAddress::LocalHost, port))
     {

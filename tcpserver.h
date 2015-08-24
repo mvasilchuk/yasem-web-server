@@ -12,8 +12,7 @@ class TcpServer : public QTcpServer
     Q_OBJECT
 public:
    explicit TcpServer(QObject *parent = 0);
-   virtual ~TcpServer(){
-    }
+   virtual ~TcpServer();
    void startServer();
    void stopServer();
 signals:

@@ -63,13 +63,9 @@ void ServerThread::run()
 
 void ServerThread::readyRead()
 {
+    QString rootDir = SDK::Browser::instance()->browserRootDir();
 
-    if(webServer->getRootDirectory().isEmpty())
-    {
-        webServer->setRootDirectory(SDK::Browser::instance()->browserRootDir());
-    }
-
-    QString rootDir = webServer->getRootDirectory();
+    DEBUG() << "rootDir" << rootDir;
 
     QHash<QByteArray, QByteArray> headers;
     QString data;
@@ -113,7 +109,7 @@ void ServerThread::readyRead()
         QStringList filePathWithArgs = fullPath.split("?");
 
         QString filename = filePathWithArgs[0].trimmed();
-        QFile* file = new QFile(filename);
+        QFile* file = new QFile(QUrl(filename).toLocalFile());
 
         qDebug() << "opening file" << filename;
 
@@ -140,11 +136,14 @@ void ServerThread::readyRead()
                 QByteArray rawData = response.getData();
                 os.writeRawData(rawData, rawData.size());
 
-                qDebug() << "data:" << rawData;
-                if (socket->state() == QTcpSocket::UnconnectedState) {
-                    delete socket;
-                    qDebug() <<"Connection closed";
-                }
+                qDebug() << "data:" << rawData; 
+            }
+
+            socket->close();
+
+            if (socket->state() == QTcpSocket::UnconnectedState) {
+                delete socket;
+                qDebug() <<"Connection closed";
             }
         }
 
@@ -166,4 +165,5 @@ void ServerThread::disconnected()
     }
     DEBUG() << "2";
     socket->thread()->quit();
+    this->quit();
 }
