@@ -144,30 +144,8 @@ void HttpProxyThread::run()
 
     });
 
-    auto on_disconnect = [=](){
-        DEBUG() << "close connection";
-        if (m_socket != NULL)
-        {
-            if (m_socket->error() != QAbstractSocket::RemoteHostClosedError)
-                WARN() << "Error for:" << m_socket->errorString();
-            m_socket->disconnect();
-            if(m_socket->state() == QAbstractSocket::ConnectedState)
-                m_socket->disconnectFromHost();
-            m_socket->deleteLater();
-        }
-        if (m_proxy_socket != NULL) {
-            if (m_proxy_socket->error() != QAbstractSocket::RemoteHostClosedError)
-                WARN() << "Error for:" << m_proxy_socket->errorString();
-            m_proxy_socket->disconnect();
-            if(m_proxy_socket->state() == QAbstractSocket::ConnectedState)
-                m_proxy_socket->disconnectFromHost();
-
-            m_proxy_socket->deleteLater();
-        }
-    };
-
-    connect(m_socket, &QTcpSocket::disconnected, on_disconnect);
-    connect(m_proxy_socket, &QTcpSocket::disconnected, on_disconnect);
+    connect(m_socket, &QTcpSocket::disconnected, this, &HttpProxyThread::onDisconnected);
+    connect(m_proxy_socket, &QTcpSocket::disconnected, this, &HttpProxyThread::onDisconnected);
 
     // We'll have multiple clients, we want to know which is which
     //qDebug() << m_socket_descriptor << " http client connected";
@@ -230,6 +208,29 @@ void HttpProxyThread::processQuery()
     //    m_paused = true;
     //}
     //m_proxy_server->addToQueue(this);
+}
+
+void HttpProxyThread::onDisconnected()
+{
+    DEBUG() << "close connection";
+    if (m_socket != NULL)
+    {
+        if (m_socket->error() != QAbstractSocket::RemoteHostClosedError)
+            WARN() << "Error for:" << m_socket->errorString();
+        m_socket->disconnect();
+        if(m_socket->state() == QAbstractSocket::ConnectedState)
+            m_socket->disconnectFromHost();
+        m_socket->deleteLater();
+    }
+    if (m_proxy_socket != NULL) {
+        if (m_proxy_socket->error() != QAbstractSocket::RemoteHostClosedError)
+            WARN() << "Error for:" << m_proxy_socket->errorString();
+        m_proxy_socket->disconnect();
+        if(m_proxy_socket->state() == QAbstractSocket::ConnectedState)
+            m_proxy_socket->disconnectFromHost();
+
+        m_proxy_socket->deleteLater();
+    }
 }
 
 

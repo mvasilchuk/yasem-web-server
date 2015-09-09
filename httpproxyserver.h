@@ -44,6 +44,7 @@ protected:
 
 private slots:
     void processQuery();
+    void onDisconnected();
 
 protected:
     qintptr m_socket_descriptor;
